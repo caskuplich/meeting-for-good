@@ -8,6 +8,7 @@ import Badge from 'material-ui/Badge';
 import cssModules from 'react-css-modules';
 import PropTypes from 'prop-types';
 import { quantOwnerNotNotified, handleEventLinkClick } from './NotificationBarUtils';
+import { isEvent, isCurUser } from '../../util/commonPropTypes';
 import styles from './notification-bar.css';
 
 class NotificationBar extends Component {
@@ -129,48 +130,24 @@ class NotificationBar extends Component {
         targetOrigin={{ horizontal: 'right', vertical: 'top' }}
       >
         {this.renderMenuRows()}
-      </IconMenu >
+      </IconMenu>
     );
   }
 }
 
+NotificationBar.defaultProps = {
+  curUser: () => { console.log('curUser prop validation not set!'); },
+};
+
 NotificationBar.propTypes = {
-  // Currrent user
-  curUser: PropTypes.shape({
-    _id: PropTypes.string,      // Unique user id
-    name: PropTypes.string,     // User name
-    avatar: PropTypes.string,   // URL to image representing user(?)
-  }).isRequired,
+  // Current user
+  curUser: isCurUser,
 
   cbHandleDismissGuest: PropTypes.func.isRequired,
 
   // List of events containing list of event participants
   events: PropTypes.arrayOf(
-    PropTypes.shape({
-      _id: PropTypes.string,
-      name: PropTypes.string,
-      owner: PropTypes.string,
-      active: PropTypes.bool,
-      selectedTimeRange: PropTypes.array,
-      dates: PropTypes.arrayOf(PropTypes.shape({
-        fromDate: PropTypes.string,
-        toDate: PropTypes.string,
-        _id: PropTypes.string,
-      })),
-      participants: PropTypes.arrayOf(PropTypes.shape({
-        userId: PropTypes.shape({
-          id: PropTypes.string,
-          avatar: PropTypes.string,
-          name: PropTypes.string,
-          emails: PropTypes.arrayOf(PropTypes.string),
-        }),
-        _id: PropTypes.string,
-        status: PropTypes.oneOf([0, 1, 2, 3]),
-        emailUpdate: PropTypes.bool,
-        ownerNotified: PropTypes.bool,
-        availability: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string)),
-      })),
-    }),
+    isEvent,
   ).isRequired,
 };
 
