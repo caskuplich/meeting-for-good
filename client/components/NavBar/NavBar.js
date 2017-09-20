@@ -11,6 +11,7 @@ import avatarPlaceHolder from '../../assets/Profile_avatar_placeholder_large.png
 import AboutDialog from '../AboutDialog/AboutDialog';
 import AvatarMenu from '../NavBar/NavBarAvatarMenu';
 import CalendarIntegrationSettings from '../CalendarIntegrationSettings/CalendarIntegrationSettings';
+import { isEvent, isCurUser } from '../../util/commonPropTypes';
 
 import styles from './nav-bar.css';
 
@@ -142,7 +143,7 @@ class NavBar extends Component {
         <FlatButton href={this.state.conditionalHomeLink} styleName="logoButton" aria-label="reload app">
           Meeting for Good
           </FlatButton>
-      </ToolbarGroup >
+      </ToolbarGroup>
     );
   }
 
@@ -159,6 +160,7 @@ class NavBar extends Component {
 NavBar.defaultProps = {
   isAuthenticated: false,
   showPastEvents: false,
+  curUser: () => { console.log('curUser prop validation not set!'); },
 };
 
 NavBar.propTypes = {
@@ -169,11 +171,7 @@ NavBar.propTypes = {
   isAuthenticated: PropTypes.bool,
 
   // Current user
-  curUser: PropTypes.shape({
-    _id: PropTypes.string,      // Unique user id
-    name: PropTypes.string,     // User name
-    avatar: PropTypes.string,   // URL to image representing user(?)
-  }).isRequired,
+  curUser: isCurUser,
 
   cbOpenLoginModal: PropTypes.func.isRequired,
   showPastEvents: PropTypes.bool,
@@ -182,31 +180,7 @@ NavBar.propTypes = {
 
   // List of events containing list of event participants
   events: PropTypes.arrayOf(
-    PropTypes.shape({
-      _id: PropTypes.string,
-      name: PropTypes.string,
-      owner: PropTypes.string,
-      active: PropTypes.bool,
-      selectedTimeRange: PropTypes.array,
-      dates: PropTypes.arrayOf(PropTypes.shape({
-        fromDate: PropTypes.string,
-        toDate: PropTypes.string,
-        _id: PropTypes.string,
-      })),
-      participants: PropTypes.arrayOf(PropTypes.shape({
-        userId: PropTypes.shape({
-          id: PropTypes.string,
-          avatar: PropTypes.string,
-          name: PropTypes.string,
-          emails: PropTypes.arrayOf(PropTypes.string),
-        }),
-        _id: PropTypes.string,
-        status: PropTypes.oneOf([0, 1, 2, 3]),
-        emailUpdate: PropTypes.bool,
-        ownerNotified: PropTypes.bool,
-        availability: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string)),
-      })),
-    }),
+    isEvent,
   ).isRequired,
 
 };
